@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from railforge.cargo.segregation import violations
+from railforge.customs import document_pre_review
 from railforge.commercial.contract_capacity import allocate as allocate_capacity
 from railforge.control.recovery import choose as choose_recovery
 from railforge.customs.holds import active
@@ -103,6 +104,17 @@ class RailForgeFeatureService:
                 raise ValueError("cargo segregation conflict")
             return {"precleared": True}
         return self.control.run(operation_id, "feature.customs.precleared", operation_id, at, action)
+
+    def pre_review_documents(self, operation_id, engine, events, at):
+        def action():
+            conclusions = [engine.handle(e) for e in events]
+            return {
+                "conclusions": conclusions,
+                "accepted": sum(1 for c in conclusions if c.status == document_pre_review.ACCEPTED),
+                "rejected": sum(1 for c in conclusions if c.status == document_pre_review.REJECTED),
+                "replayed": sum(1 for c in conclusions if c.replayed),
+            }
+        return self.control.run(operation_id, "feature.customs.document_pre_review", operation_id, at, action)
 
     def recover_disruption(self, operation_id, options, capacity, capabilities, max_risk, max_duration,
                            requests, sections, existing, headway, at):
