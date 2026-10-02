@@ -38,3 +38,10 @@ class RailForgeService:
     def workflow(self):
         return self.control
 
+    def prereview_freight(self, operation_id, submission, open_windows, slots,
+                          isolation_rules, formation, at=None):
+        return self.features.prereview_freight(
+            operation_id, submission, open_windows, slots, isolation_rules,
+            formation, at=at,
+        )
+

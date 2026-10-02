@@ -146,3 +146,12 @@ class RailForgeFeatureService:
             return {"accepted": accepted, "delay": fused_delay(observations, max_lateness)}
         return self.control.run(operation_id, "feature.timeline.reconciled", operation_id, at, action)
 
+    def prereview_freight(self, operation_id, submission, open_windows, slots,
+                          isolation_rules, formation, at=None):
+        """Merge customs open-control, hazmat isolation, border slots and train
+        formation into a traceable pre-review conclusion keyed on event time."""
+        return self.control.prereview().submit(
+            operation_id, submission, open_windows, slots, isolation_rules,
+            formation, at=at,
+        )
+

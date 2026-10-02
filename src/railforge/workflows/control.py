@@ -188,3 +188,12 @@ class RailForgeWorkflowControl:
         return self._commit(operation_id, "eta.fused", subject, at,
                             lambda: fused_delay(rows, max_lateness))
 
+    def prereview(self):
+        """Stateful cross-border document pre-review workflow bound to this plane."""
+        from railforge.customs.prereview import CrossBorderPrereviewService
+        svc = getattr(self, "_prereview", None)
+        if svc is None:
+            svc = CrossBorderPrereviewService(self)
+            self._prereview = svc
+        return svc
+
